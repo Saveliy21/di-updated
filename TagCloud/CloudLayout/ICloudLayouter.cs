@@ -5,6 +5,4 @@ namespace TagCloud.CloudLayout;
 public interface ICloudLayouter
 {
     public Rectangle PutNextRectangle(Size rectangleSize);
-
-    public Size GetCloudSize();
 }

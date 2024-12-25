@@ -2,17 +2,11 @@
 
 namespace TagCloud.TextPreparator;
 
-public class TextHandler : ITextHandler
+public class TextHandler(ITextFilter textFilter, IFileReader fileReader) : ITextHandler
 {
-    private Dictionary<string, int> _wordCount = new();
-    private readonly ITextFilter _textFilter;
+    private readonly Dictionary<string, int> _wordCount = new();
 
-    public TextHandler(ITextFilter textFilter)
-    {
-        _textFilter = textFilter;
-    }
-
-    private Dictionary<string, int> GetWordsFrequency(IEnumerable<string> words)
+    private IDictionary<string, int> GetWordsFrequency(IEnumerable<string> words)
     {
         foreach (var word in words)
         {
@@ -23,10 +17,10 @@ public class TextHandler : ITextHandler
         return _wordCount;
     }
 
-    public Dictionary<string, int> HandleText(IFileReader text, string fileName)
+    public IDictionary<string, int> HandleText(string fileName)
     {
-        var words = text.TryReadFile(fileName);
-        var filteredWords = _textFilter.GetFilteredText(words);
+        var words = fileReader.TryReadFile(fileName);
+        var filteredWords = textFilter.GetFilteredText(words);
         return GetWordsFrequency(filteredWords);
     }
 }

@@ -4,5 +4,5 @@ namespace TagCloud.TextPreparator;
 
 public interface ITextHandler
 {
-    public Dictionary<string, int> HandleText(IFileReader text, string fileName);
+    public IDictionary<string, int> HandleText(string fileName);
 }

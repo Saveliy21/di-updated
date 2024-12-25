@@ -8,6 +8,8 @@ public class TxtReader : IFileReader
             throw new FileNotFoundException();
 
         return File.ReadLines(filePath)
+            .Select(s => s.Trim())
+            .Select(s => s.ToLower())
             .Where(line => !string.IsNullOrWhiteSpace(line))
             .ToList();
     }
