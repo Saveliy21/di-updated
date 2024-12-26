@@ -18,11 +18,11 @@ public static class Program
         Parser.Default.ParseArguments<Options>(args)
             .WithParsed(options =>
             {
-                Console.WriteLine($"Путь к файлу: {options.FilePath}");
-                Console.WriteLine($"Алгоритм: {options.Algorithm}");
-                Console.WriteLine($"Алгоритм расцветки слов: {options.WordsColor}");
-                Console.WriteLine($"Шрифт: {options.Font}");
-                Console.WriteLine($"Размер: {options.Size}");
+                Console.WriteLine($"Путь к файлу: {options.FilePath} " + Environment.NewLine +
+                                  $"Алгоритм: {options.Algorithm}" + Environment.NewLine +
+                                  $"Алгоритм расцветки слов: {options.WordsColor}" + Environment.NewLine +
+                                  $"Шрифт: {options.Font}" + Environment.NewLine +
+                                  $"Размер: {options.Size}");
                 var container = ConfigureContainer(options);
                 container.Resolve<ITextHandler>();
                 var generator = container.Resolve<ICloudDrawer>();
@@ -74,15 +74,15 @@ public static class Program
 
     private static void RegisterCLoudAlgorithm(ContainerBuilder builder, Options options)
     {
-        if (options.Algorithm.Equals("circular"))
+        if (options.Algorithm.ToLower().Equals("circular"))
         {
             builder.RegisterType<CircularSpiral>().As<ICloudForm>()
-                .WithParameter(new TypedParameter(typeof(Point), new Point(options.Size / 2)));
+                .WithParameter(new TypedParameter(typeof(Point), new Point(options.Size / 2, options.Size / 2)));
         }
         else
         {
             builder.RegisterType<SquareSpiral>().As<ICloudForm>()
-                .WithParameter(new TypedParameter(typeof(Point), new Point(options.Size / 2)));
+                .WithParameter(new TypedParameter(typeof(Point), new Point(options.Size / 2, options.Size / 2)));
         }
     }
 }

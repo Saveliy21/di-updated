@@ -4,7 +4,7 @@ namespace TagCloud.TagCloudApp;
 
 public class Options
 {
-    [Option('f', "file", HelpText = "Путь к исходному текстовому файлу.")]
+    [Option('f', "file",Required = true, HelpText = "Путь к исходному текстовому файлу.")]
     public string FilePath { get; set; }
 
     [Option('a', "algorithm", Required = true, HelpText = "Алгоритм построение облака (circular или square)")]
