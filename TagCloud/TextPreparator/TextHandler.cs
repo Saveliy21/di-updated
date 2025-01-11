@@ -2,7 +2,7 @@
 
 namespace TagCloud.TextPreparator;
 
-public class TextHandler(ITextFilter textFilter, IFileReader fileReader) : ITextHandler
+public class TextHandler(ITextFilter textFilter, IFileReader fileReader) : IWordsFrequency
 {
     private readonly Dictionary<string, int> _wordCount = new();
 
@@ -17,7 +17,7 @@ public class TextHandler(ITextFilter textFilter, IFileReader fileReader) : IText
         return _wordCount;
     }
 
-    public IDictionary<string, int> HandleText(string fileName)
+    public IDictionary<string, int> GetWordsFrequencyFromFile(string fileName)
     {
         var words = fileReader.TryReadFile(fileName);
         var filteredWords = textFilter.GetFilteredText(words);

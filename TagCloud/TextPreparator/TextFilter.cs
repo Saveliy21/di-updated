@@ -11,8 +11,12 @@ public class TextFilter : ITextFilter
 
     public IEnumerable<string> GetFilteredText(IEnumerable<string> words)
     {
-        var filteredText = words.ToList();
-        filteredText.RemoveAll(word => BoringWords.Contains(word));
+        var filteredText = words
+            .Select(s => s.Trim())
+            .Select(s => s.ToLower())
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Where(word => !BoringWords.Contains(word));
+
         return filteredText;
     }
 }

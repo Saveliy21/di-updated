@@ -24,7 +24,7 @@ public static class Program
                                   $"Шрифт: {options.Font}" + Environment.NewLine +
                                   $"Размер: {options.Size}");
                 var container = ConfigureContainer(options);
-                container.Resolve<ITextHandler>();
+                container.Resolve<IWordsFrequency>();
                 var generator = container.Resolve<ICloudDrawer>();
                 generator.DrawTagsCloudFromFile(options.FilePath);
             })
@@ -36,53 +36,40 @@ public static class Program
         var builder = new ContainerBuilder();
         builder.RegisterType<TxtReader>().As<IFileReader>();
         builder.RegisterType<TextFilter>().As<ITextFilter>();
-        builder.RegisterType<TextHandler>().As<ITextHandler>();
-        RegisterColoringAlgorithm(builder, options);
-        RegisterDrawerSettings(builder, options);
-        RegisterCLoudAlgorithm(builder, options);
+        builder.RegisterType<TextHandler>().As<IWordsFrequency>();
+        builder.Register(BuildColoringAlgorithm(options));
+        builder.Register(BuildDrawerSettings(options));
+        builder.Register(BuildCloudForm(options));
         builder.RegisterType<CloudLayouter>().As<ICloudLayouter>();
         builder.RegisterType<RectanglesGenerator>().As<IRectanglesGenerator>();
         builder.RegisterType<RectanglesCloudDrawer>().As<ICloudDrawer>();
         return builder.Build();
     }
 
-    private static void RegisterColoringAlgorithm(ContainerBuilder builder, Options options)
+    private static Func<IComponentContext, IColorAlgorithm> BuildColoringAlgorithm(Options options)
     {
         if (options.WordsColor.ToLower().Equals("random"))
         {
-            builder.RegisterType<RandomColor>().As<IColorAlgorithm>();
+            return c => new RandomColor();
         }
-        else if (Color.FromName(options.WordsColor).IsKnownColor)
+
+        if (Color.FromName(options.WordsColor).IsKnownColor)
         {
-            builder.RegisterType<SingleColor>().As<IColorAlgorithm>()
-                .WithParameter(new TypedParameter(typeof(Color), Color.FromName(options.WordsColor)));
+            return c => new SingleColor(Color.FromName(options.WordsColor));
         }
-        else
-        {
-            var gradient = options.WordsColor.Split("-").Select(Color.FromName).ToArray();
-            builder.RegisterType<GradientColor>().As<IColorAlgorithm>()
-                .WithParameter(new TypedParameter(typeof(Color[]), gradient));
-        }
+
+        var gradient = options.WordsColor.Split("-").Select(Color.FromName).ToArray();
+        return c => new GradientColor(gradient[0], gradient[1]);
     }
 
-    private static void RegisterDrawerSettings(ContainerBuilder builder, Options options)
-    {
-        var registerType = builder.RegisterType<DrawerSettings>();
-        registerType.WithParameter(new TypedParameter(typeof(Size), new Size(options.Size, options.Size)));
-        registerType.WithParameter(new TypedParameter(typeof(string), options.Font));
-    }
+    private static Func<IComponentContext, DrawerSettings> BuildDrawerSettings(Options options) =>
+        c => new DrawerSettings(
+            c.Resolve<IColorAlgorithm>(),
+            new Size(options.Size, options.Size),
+            options.Font);
 
-    private static void RegisterCLoudAlgorithm(ContainerBuilder builder, Options options)
-    {
-        if (options.Algorithm.ToLower().Equals("circular"))
-        {
-            builder.RegisterType<CircularSpiral>().As<ICloudForm>()
-                .WithParameter(new TypedParameter(typeof(Point), new Point(options.Size / 2, options.Size / 2)));
-        }
-        else
-        {
-            builder.RegisterType<SquareSpiral>().As<ICloudForm>()
-                .WithParameter(new TypedParameter(typeof(Point), new Point(options.Size / 2, options.Size / 2)));
-        }
-    }
+    private static Func<IComponentContext, ICloudForm> BuildCloudForm(Options options) =>
+        _ => options.Algorithm.ToLower().Equals("circular")
+            ? new CircularSpiral(new Point(options.Size / 2, options.Size / 2))
+            : new SquareSpiral(new Point(options.Size / 2, options.Size / 2));
 }

@@ -113,7 +113,7 @@ public class TextPreparatorTests
             {"гуляет", 1}
         };
 
-        var actual = TextHandler.HandleText(TempFileName);
+        var actual = TextHandler.GetWordsFrequencyFromFile(TempFileName);
         
         actual.Should().BeEquivalentTo(expected);
     }

@@ -18,7 +18,7 @@ public class CloudLayouter(ICloudForm cloudForm) : ICloudLayouter
 
         do
         {
-            Point point = cloudForm.GetNextPoint();
+            var point = cloudForm.GetNextPoint();
             point.Offset(-rectangleSize.Width / 2, -rectangleSize.Height / 2);
             rectangle = new Rectangle(point, rectangleSize);
         } while (Rectangles.Any(r => r.IntersectsWith(rectangle)));

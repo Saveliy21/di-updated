@@ -2,5 +2,5 @@
 
 public interface IRectanglesGenerator
 {
-    public IList<WordInShape> GetWordsInShape(IDictionary<string, int> words);
+    public IList<WordInShape> GetWordsInShape(IDictionary<string, int> wordToWeight);
 }

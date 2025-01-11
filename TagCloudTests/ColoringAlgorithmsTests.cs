@@ -7,7 +7,7 @@ namespace TagCloudTests;
 
 public class ColoringAlgorithmsTests
 {
-    private readonly GradientColor _gradientColor = new ([Color.Red, Color.Blue]);
+    private readonly GradientColor _gradientColor = new (Color.Red, Color.Blue);
     private readonly RandomColor _randomColor = new ();
     private readonly SingleColor _singleColor = new (Color.Green);
 

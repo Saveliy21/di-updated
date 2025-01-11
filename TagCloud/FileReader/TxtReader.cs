@@ -7,10 +7,6 @@ public class TxtReader : IFileReader
         if (!File.Exists(filePath))
             throw new FileNotFoundException();
 
-        return File.ReadLines(filePath)
-            .Select(s => s.Trim())
-            .Select(s => s.ToLower())
-            .Where(line => !string.IsNullOrWhiteSpace(line))
-            .ToList();
+        return File.ReadLines(filePath).ToList();
     }
 }
