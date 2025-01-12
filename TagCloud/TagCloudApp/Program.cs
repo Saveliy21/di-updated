@@ -19,7 +19,7 @@ public static class Program
             .WithParsed(options =>
             {
                 Console.WriteLine($"Путь к файлу: {options.FilePath} " + Environment.NewLine +
-                                  $"Алгоритм: {options.Algorithm}" + Environment.NewLine +
+                                  $"Алгоритм: {options.TagCloudAlgorithm}" + Environment.NewLine +
                                   $"Алгоритм расцветки слов: {options.WordsColor}" + Environment.NewLine +
                                   $"Шрифт: {options.Font}" + Environment.NewLine +
                                   $"Размер: {options.Size}");
@@ -68,8 +68,16 @@ public static class Program
             new Size(options.Size, options.Size),
             options.Font);
 
-    private static Func<IComponentContext, ICloudForm> BuildCloudForm(Options options) =>
-        _ => options.Algorithm.ToLower().Equals("circular")
-            ? new CircularSpiral(new Point(options.Size / 2, options.Size / 2))
-            : new SquareSpiral(new Point(options.Size / 2, options.Size / 2));
+    private static Func<IComponentContext, ICloudForm> BuildCloudForm(Options options)
+    {
+        switch (options.TagCloudAlgorithm)
+        {
+            case TagCloudAlgorithms.Circular:
+                return _ => new CircularSpiral(new Point(options.Size / 2, options.Size / 2));
+            case TagCloudAlgorithms.Square:
+                return _ => new SquareSpiral(new Point(options.Size / 2, options.Size / 2));
+            default:
+                return _ => new CircularSpiral(new Point(options.Size / 2, options.Size / 2));
+        }
+    }
 }
